@@ -496,7 +496,7 @@ describe('DELETE /api/artists/:id', function() {
   });
 });
 
-describe('GET /api/series', function() {
+xdescribe('GET /api/series', function() {
   before(function(done) {
     seed.seedSeriesDatabase(done);
   });
@@ -520,7 +520,7 @@ describe('GET /api/series', function() {
   });
 });
 
-describe('GET /api/series/:id', function() {
+xdescribe('GET /api/series/:id', function() {
   before(function(done) {
     seed.seedSeriesDatabase(done);
   });
@@ -549,7 +549,7 @@ describe('GET /api/series/:id', function() {
   });
 });
 
-describe('POST /api/series', function() {
+xdescribe('POST /api/series', function() {
   let newSeries;
 
   beforeEach(function(done) {
@@ -611,7 +611,7 @@ describe('POST /api/series', function() {
   });
 });
 
-describe('PUT /api/series/:id', function() {
+xdescribe('PUT /api/series/:id', function() {
   let updatedSeries;
 
   beforeEach(function(done) {
@@ -673,7 +673,7 @@ describe('PUT /api/series/:id', function() {
   });
 });
 
-describe('DELETE /api/series/:id', function() {
+xdescribe('DELETE /api/series/:id', function() {
   beforeEach(function(done) {
     seed.seedSeriesDatabase(done);
   });
@@ -717,7 +717,7 @@ describe('DELETE /api/series/:id', function() {
   });
 });
 
-describe('GET /api/series/:seriesId/issues', function() {
+xdescribe('GET /api/series/:seriesId/issues', function() {
   before(function(done) {
     seed.seedIssueDatabase(done);
   });
@@ -755,7 +755,7 @@ describe('GET /api/series/:seriesId/issues', function() {
       });
 });
 
-describe('POST /api/series/:seriesId/issues', function() {
+xdescribe('POST /api/series/:seriesId/issues', function() {
   let newIssue;
 
   beforeEach(function(done) {
@@ -841,7 +841,7 @@ describe('POST /api/series/:seriesId/issues', function() {
   });
 });
 
-describe('PUT /api/series/:seriesId/issues/:issueId', function() {
+xdescribe('PUT /api/series/:seriesId/issues/:issueId', function() {
   let updatedIssue;
 
   beforeEach(function(done) {
@@ -939,7 +939,7 @@ describe('PUT /api/series/:seriesId/issues/:issueId', function() {
   });
 });
 
-describe('DELETE /api/series/:seriesId/issues/:issueId', function() {
+xdescribe('DELETE /api/series/:seriesId/issues/:issueId', function() {
   beforeEach(function(done) {
     seed.seedIssueDatabase(done);
   });

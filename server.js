@@ -13,6 +13,11 @@ app.use(bodyParser.json());
 app.use(errorHandler());
 app.use(morgan('dev'));
 
+const apiRouter = require('./api/api.js');
+app.use('/api',apiRouter);
+
 app.listen(PORT, () => {
   console.log(`Server is listening for requests at port ${PORT}`);
 });
+
+module.exports = app;

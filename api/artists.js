@@ -82,21 +82,77 @@ artistRouter.get('/:id',(req,res,next) =>{
   res.status(200).json(res.body);
 })
 
-artistRouter.put('/:id',(req,res,next) =>{
-/**  db.run(`UPDATE Artist
-    SET name = $name
-    AND date_of_birth = $DOB
-     AND biography = $biography
-     AND is_currently_employed = $employed
-     where id = $id`),
-     {$name: 'name',
-       $DOB: 'date',
-       $biography: 'bio',
-       $employed: 1,
-     }
-     **/
-     res.status(200).send();
+
+artistRouter.delete('/:id',(req,res,next) =>{
+  const sql = `UPDATE ARTIST
+  SET is_currently_employed = 0 WHERE Artist.id = $id`;
+  const values = {$id: req.params.id};
+  db.run(sql, values, function(error) {
+    if (error) {
+      next(error);
+    } else {
+      db.get(`SELECT * FROM Artist WHERE Artist.id = ${req.params.id}`, (error, updatedArtist) => {
+        return res.status(200).json({artist: updatedArtist});
+      });
+    }
+  });
 })
+
+artistRouter.put('/:id',(req,res,next) =>{
+  const newArtist = req.body.artist;
+  const name = newArtist.name;
+  const date = newArtist.dateOfBirth;
+  const bio = newArtist.biography;
+  const employed = newArtist.isCurrentlyEmployed;
+
+  if (!newArtist.name || !newArtist.dateOfBirth ||
+    !newArtist.biography || !newArtist.isCurrentlyEmployed){
+      console.log("BAD Update");
+      return res.status(400).send();
+    }
+  else{
+    const sql = `UPDATE Artist
+      SET 'name' = $name
+      AND 'date_of_birth' = $date
+       AND 'biography' = $biography
+       AND 'is_currently_employed' = $employed
+       where Artist.id = $id;`;
+
+    const values = {$name: name,
+    $date: date,
+    $biography: bio,
+    $employed: employed,
+    $id: req.params.id};
+
+    db.run(sql,values,
+       function(err){
+         if(err){
+           console.log(err);
+         }
+
+         console.log("UPDATE RAN");
+      db.get(`SELECT * FROM Artist
+          where Artist.id=$artistId`,
+            {$artistId: req.params.id},
+            function (err,row){
+              if (err){
+                console.log(err);
+                return;
+              }
+              else if(row === undefined){
+                console.log("Row Non-Existant");
+                return res.sendStatus(400);
+              }
+              console.log(row);
+              res.status(200).send({artist:row});
+      })
+    });
+  }
+})
+
+
+
+
 
 //This exports our express router to be used in
 //other js files

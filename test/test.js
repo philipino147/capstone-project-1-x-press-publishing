@@ -390,7 +390,7 @@ describe('POST /api/artists', function() {
   });
 });
 
-describe('PUT /api/artists/:id', function() {
+xdescribe('PUT /api/artists/:id', function() {
   let updatedArtist;
 
   beforeEach(function(done) {
@@ -496,7 +496,7 @@ describe('DELETE /api/artists/:id', function() {
   });
 });
 
-xdescribe('GET /api/series', function() {
+describe('GET /api/series', function() {
   before(function(done) {
     seed.seedSeriesDatabase(done);
   });
@@ -520,7 +520,7 @@ xdescribe('GET /api/series', function() {
   });
 });
 
-xdescribe('GET /api/series/:id', function() {
+describe('GET /api/series/:id', function() {
   before(function(done) {
     seed.seedSeriesDatabase(done);
   });

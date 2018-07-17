@@ -1,12 +1,12 @@
 const express = require('express');
 const artistRouter = express();
 const sqlite3 = require('sqlite3');
-const morgan = require('morgan');
+//const morgan = require('morgan');
 const errorHandler = require('errorhandler');
 
 //Note that morgan must be imported into
 //any route where it would be used for logging
-artistRouter.use(morgan('dev'));
+//artistRouter.use(morgan('dev'));
 
 //Sets db as an instance of either the TEST_DATABASE
 //if existant or else our sqlite database
@@ -30,11 +30,14 @@ artistRouter.get('/',(req,res,next) =>{
 
 artistRouter.post('/', (req, res, next) => {
 const newArtist = req.body.artist;
-  const sql = 'INSERT INTO Artist (name, date_of_birth, biography) VALUES ($name, $date_of_birth, $biography)';
+const isCurrentlyEmployed = req.body.artist.isCurrentlyEmployed === 0 ? 0 : 1;
+
+  const sql = 'INSERT INTO Artist (name, date_of_birth, biography, is_currently_employed) VALUES ($name, $date_of_birth, $biography, $isCurrentlyEmployed)';
   const values =   {
     $name: newArtist.name,
     $date_of_birth: newArtist.dateOfBirth,
-    $biography: newArtist.biography};
+    $biography: newArtist.biography,
+    $isCurrentlyEmployed: isCurrentlyEmployed};
       db.run(sql,values,
       function(err) {
         if (err) {
@@ -73,6 +76,12 @@ artistRouter.param("id",(req,res,next,id) =>{
       //Attaches artist object with row properties
       //to our req.body
       req.params.id = artistId;
+
+      //Note that if this was req.body, it would overwrite our req.body in a
+      //PUT request to 'artist/:id'
+      //The tests call for our object to be appended to res.body
+      //but it can also be attached to another key in the req or res Objects
+      //that are not in use
       res.body = {artist:row};
       next();
   })
@@ -91,7 +100,7 @@ artistRouter.delete('/:id',(req,res,next) =>{
     if (error) {
       next(error);
     } else {
-      db.get(`SELECT * FROM Artist WHERE Artist.id = ${req.params.id}`, (error, updatedArtist) => {
+      db.get('SELECT * FROM Artist WHERE Artist.id = $id', values, (error, updatedArtist) => {
         return res.status(200).json({artist: updatedArtist});
       });
     }
@@ -111,48 +120,35 @@ artistRouter.put('/:id',(req,res,next) =>{
       return res.status(400).send();
     }
   else{
-    const sql = `UPDATE Artist
-      SET 'name' = $name
-      AND 'date_of_birth' = $date
-       AND 'biography' = $biography
-       AND 'is_currently_employed' = $employed
-       where Artist.id = $id;`;
+    //The SQL standard says that strings must use 'single quotes',
+    //and identifiers (such as table and column names), when quoted, must use "double quotes".
+    //For compatibility with MySQL, SQLite also allows to use single quotes for identifiers
+    //and double quotes for strings, but only when the context makes the meaning unambiguous.
+    //To avoid issues, just try to stick to the standard...
+    const sql = 'UPDATE "Artist" SET "name" = $name, "date_of_birth" = $date, "biography" = $biography, "is_currently_employed" = $employed WHERE Artist.id = $id';
 
-    const values = {$name: name,
-    $date: date,
-    $biography: bio,
-    $employed: employed,
-    $id: req.params.id};
+    const values = {
+      $id: req.params.id,
+      $name: name,
+      $date: date,
+      $biography: bio,
+      $employed: employed
+    };
 
-    db.run(sql,values,
-       function(err){
-         if(err){
-           console.log(err);
-         }
-
-         console.log("UPDATE RAN");
-      db.get(`SELECT * FROM Artist
-          where Artist.id=$artistId`,
-            {$artistId: req.params.id},
-            function (err,row){
-              if (err){
-                console.log(err);
-                return;
-              }
-              else if(row === undefined){
-                console.log("Row Non-Existant");
-                return res.sendStatus(400);
-              }
-              console.log(row);
-              res.status(200).send({artist:row});
-      })
+    db.run(sql, values, function(error) {
+      if (error) {
+        next(error);
+      } else {
+        //Note that the our previously declared 'values' Object cannot be used in
+        //our db.get statement as the json Object must ONLY contain values used in our
+        //SQLite query in order to function appropriately
+        db.get('SELECT * FROM Artist WHERE Artist.id = $id', {$id: req.params.id}, (error, updatedArtist) => {
+          return res.status(200).json({artist: updatedArtist});
+        });
+      }
     });
   }
 })
-
-
-
-
 
 //This exports our express router to be used in
 //other js files

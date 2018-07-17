@@ -717,7 +717,7 @@ xdescribe('DELETE /api/series/:id', function() {
   });
 });
 
-xdescribe('GET /api/series/:seriesId/issues', function() {
+describe('GET /api/series/:seriesId/issues', function() {
   before(function(done) {
     seed.seedIssueDatabase(done);
   });
@@ -753,9 +753,9 @@ xdescribe('GET /api/series/:seriesId/issues', function() {
         .get('/api/series/999/issues')
         .expect(404);
       });
-});
+})
 
-xdescribe('POST /api/series/:seriesId/issues', function() {
+describe('POST /api/series/:seriesId/issues', function() {
   let newIssue;
 
   beforeEach(function(done) {
@@ -841,7 +841,7 @@ xdescribe('POST /api/series/:seriesId/issues', function() {
   });
 });
 
-xdescribe('PUT /api/series/:seriesId/issues/:issueId', function() {
+describe('PUT /api/series/:seriesId/issues/:issueId', function() {
   let updatedIssue;
 
   beforeEach(function(done) {

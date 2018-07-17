@@ -3,13 +3,16 @@ const seriesRouter = express();
 const sqlite3 = require('sqlite3');
 const errorHandler = require('errorhandler');
 
+const issuesRouter = require('./issues.js');
+seriesRouter.use('/:seriesId/issues', issuesRouter);
+
 const db = new sqlite3.Database(process.env.TEST_DATABASE || './database.sqlite');
 
 seriesRouter.get('/',(req,res,next) =>{
   db.all('SELECT * FROM Series', (err,row) =>{
     if (err){
       //Logs any error to the console if there is one
-      //then extis function
+      //then exits function
       console.log(err);
       return;
     }
@@ -43,10 +46,10 @@ const newSeries = req.body.series;
       })
     });
 
-seriesRouter.param("id",(req,res,next,id) =>{
-  const seriesId = id;
+seriesRouter.param("seriesId",(req,res,next,seriesId) =>{
+  const idSeries = seriesId;
   const sql = 'SELECT * FROM Series where Series.id=$seriesId';
-  const values = {$seriesId: seriesId};
+  const values = {$seriesId: idSeries};
   db.get(sql,values, function (err,row) {
     if (err){
       //Logs any error to the console if there is one
@@ -54,14 +57,13 @@ seriesRouter.param("id",(req,res,next,id) =>{
       return;
     }
     else if(row === undefined){
-      //console.log("Row Non-Existant");
       return res.sendStatus(404);
     }
      //Execute if no errors in sqlite query
       //Calls next middleware function
       //Attaches series object with row properties
       //to our req.body
-      req.params.id = seriesId;
+      req.params.seriesId = idSeries;
 
       //Note that if this was req.body, it would overwrite our req.body in a
       //PUT request to 'series/:id'
@@ -73,13 +75,12 @@ seriesRouter.param("id",(req,res,next,id) =>{
   })
 })
 
-seriesRouter.get('/:id',(req,res,next) =>{
+seriesRouter.get('/:seriesId',(req,res,next) =>{
   res.status(200).json(res.body);
 })
 
-seriesRouter.put('/:id',(req,res,next) =>{
+seriesRouter.put('/:seriesId',(req,res,next) =>{
   const newSeries = req.body.series;
-  console.log(newSeries);
   const name = newSeries.name;
   const description = newSeries.description;
 
@@ -96,7 +97,7 @@ seriesRouter.put('/:id',(req,res,next) =>{
     const sql = 'UPDATE "Series" SET "name" = $name, "description" = $description WHERE Series.id = $id';
 
     const values = {
-      $id: req.params.id,
+      $id: req.params.seriesId,
       $name: name,
       $description: description
     };
@@ -108,7 +109,7 @@ seriesRouter.put('/:id',(req,res,next) =>{
         //Note that the our previously declared 'values' Object cannot be used in
         //our db.get statement as the json Object must ONLY contain values used in our
         //SQLite query in order to function appropriately
-        db.get('SELECT * FROM Series WHERE Series.id = $id', {$id: req.params.id}, (error, updatedSeries) => {
+        db.get('SELECT * FROM Series WHERE Series.id = $id', {$id: req.params.seriesId}, (error, updatedSeries) => {
           return res.status(200).json({series: updatedSeries});
         });
       }
@@ -116,15 +117,15 @@ seriesRouter.put('/:id',(req,res,next) =>{
   }
 })
 
-seriesRouter.delete('/:id',(req,res,next) =>{
-  console.log(req.params.id);
+seriesRouter.delete('/:seriesId',(req,res,next) =>{
+  console.log(req.params.seriesId);
   const sql = 'DELETE FROM Series WHERE Series.id = $id';
-  const values = {$id: req.params.id};
+  const values = {$id: req.params.seriesId};
   db.run(sql, values, function(error) {
     if (error) {
       next(error);
     } else {
-      db.get('SELECT * FROM Series WHERE Series.id = $id',{$id : req.params.id}, (error, deletedSeries) => {
+      db.get('SELECT * FROM Series WHERE Series.id = $id',{$id : req.params.seriesId}, (error, deletedSeries) => {
         if(error){
           console.log(error);
         }

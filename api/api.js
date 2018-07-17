@@ -6,6 +6,8 @@ apiRouter.use('/artists', artistRouter);
 
 const seriesRouter = require('./series.js');
 apiRouter.use('/series', seriesRouter);
+
+
 //apiRouter.get('/artists',(req,res,send) =>{
 //  res.sendStatus(200);
 //});

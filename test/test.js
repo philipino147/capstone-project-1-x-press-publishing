@@ -11,7 +11,7 @@ const seed = require('./seed.js');
 const prodDb = new sqlite3.Database('./database.sqlite');
 let testDb = new sqlite3.Database(process.env.TEST_DATABASE);
 
-xdescribe('Artist Table', function() {
+describe('Artist Table', function() {
   it('should exist', function(done) {
     prodDb.get("SELECT name FROM sqlite_master WHERE type='table' AND name='Artist'", (error, table) => {
       if (error || !table) {
@@ -95,7 +95,7 @@ xdescribe('Artist Table', function() {
   });
 });
 
-xdescribe('Series Table', function() {
+describe('Series Table', function() {
   it('should exist', function(done) {
     prodDb.get("SELECT name FROM sqlite_master WHERE type='table' AND name='Series'", (error, table) => {
       if (error || !table) {
@@ -149,7 +149,7 @@ xdescribe('Series Table', function() {
   });
 });
 
-xdescribe('Issue Table', function() {
+describe('Issue Table', function() {
   it('should exist', function(done) {
     prodDb.get("SELECT name FROM sqlite_master WHERE type='table' AND name='Issue'", (error, table) => {
       if (error || !table) {
@@ -259,7 +259,7 @@ xdescribe('Issue Table', function() {
   });
 });
 
-xdescribe('GET /api/artists', function() {
+describe('GET /api/artists', function() {
   before(function(done) {
     seed.seedArtistDatabase(done);
   });
@@ -283,7 +283,7 @@ xdescribe('GET /api/artists', function() {
   });
 });
 
-xdescribe('GET /api/artists/:id', function() {
+describe('GET /api/artists/:id', function() {
   before(function(done) {
     seed.seedArtistDatabase(done);
   });
@@ -314,7 +314,7 @@ xdescribe('GET /api/artists/:id', function() {
   });
 });
 
-xdescribe('POST /api/artists', function() {
+describe('POST /api/artists', function() {
   let newArtist;
 
   beforeEach(function(done) {
@@ -390,7 +390,7 @@ xdescribe('POST /api/artists', function() {
   });
 });
 
-xdescribe('PUT /api/artists/:id', function() {
+describe('PUT /api/artists/:id', function() {
   let updatedArtist;
 
   beforeEach(function(done) {
@@ -459,7 +459,7 @@ xdescribe('PUT /api/artists/:id', function() {
   });
 });
 
-xdescribe('DELETE /api/artists/:id', function() {
+describe('DELETE /api/artists/:id', function() {
   beforeEach(function(done) {
     seed.seedArtistDatabase(done);
   });
@@ -496,7 +496,7 @@ xdescribe('DELETE /api/artists/:id', function() {
   });
 });
 
-xdescribe('GET /api/series', function() {
+describe('GET /api/series', function() {
   before(function(done) {
     seed.seedSeriesDatabase(done);
   });
@@ -520,7 +520,7 @@ xdescribe('GET /api/series', function() {
   });
 });
 
-xdescribe('GET /api/series/:id', function() {
+describe('GET /api/series/:id', function() {
   before(function(done) {
     seed.seedSeriesDatabase(done);
   });
@@ -549,7 +549,7 @@ xdescribe('GET /api/series/:id', function() {
   });
 });
 
-xdescribe('POST /api/series', function() {
+describe('POST /api/series', function() {
   let newSeries;
 
   beforeEach(function(done) {
@@ -611,7 +611,7 @@ xdescribe('POST /api/series', function() {
   });
 });
 
-xdescribe('PUT /api/series/:id', function() {
+describe('PUT /api/series/:id', function() {
   let updatedSeries;
 
   beforeEach(function(done) {
@@ -673,7 +673,7 @@ xdescribe('PUT /api/series/:id', function() {
   });
 });
 
-xdescribe('DELETE /api/series/:id', function() {
+describe('DELETE /api/series/:id', function() {
   beforeEach(function(done) {
     seed.seedSeriesDatabase(done);
   });
@@ -939,7 +939,7 @@ describe('PUT /api/series/:seriesId/issues/:issueId', function() {
   });
 });
 
-xdescribe('DELETE /api/series/:seriesId/issues/:issueId', function() {
+describe('DELETE /api/series/:seriesId/issues/:issueId', function() {
   beforeEach(function(done) {
     seed.seedIssueDatabase(done);
   });

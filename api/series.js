@@ -118,23 +118,31 @@ seriesRouter.put('/:seriesId',(req,res,next) =>{
 })
 
 seriesRouter.delete('/:seriesId',(req,res,next) =>{
-  console.log(req.params.seriesId);
+  db.get('SELECT * FROM ISSUE WHERE series_id = $seriesId',{$seriesId:req.params.seriesId},function(error,row){
+    if(error){
+      console.log(err);
+      return;
+    }
+    else if(row){
+      return res.sendStatus(400);
+    }
+
   const sql = 'DELETE FROM Series WHERE Series.id = $id';
   const values = {$id: req.params.seriesId};
   db.run(sql, values, function(error) {
     if (error) {
-      next(error);
+      console.log(error);
+      return;
     } else {
       db.get('SELECT * FROM Series WHERE Series.id = $id',{$id : req.params.seriesId}, (error, deletedSeries) => {
         if(error){
           console.log(error);
         }
-        console.log("SELECTED");
-        console.log(deletedSeries);
         return res.status(204).send();
       });
     }
   });
+})
 })
 
 
